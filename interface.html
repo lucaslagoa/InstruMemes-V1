@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Cache-Control" content="no-store" />
+<script>
+
+
+var context = new AudioContext(); 
+var electro = context.createBuffer(2, context.sampleRate*5, context.sampleRate);
+var context2 = new AudioContext(); 
+var electro2 = context2.createBuffer(2, context2.sampleRate*5, context2.sampleRate);
+var context3 = new AudioContext(); 
+var electro3 = context3.createBuffer(2, context3.sampleRate*5, context3.sampleRate);
+var context4 = new AudioContext(); 
+var electro4 = context4.createBuffer(2, context4.sampleRate*5, context4.sampleRate);
+var context5 = new AudioContext(); 
+var electro5 = context5.createBuffer(2, context5.sampleRate*5, context5.sampleRate);
+var context6 = new AudioContext(); 
+var electro6 = context6.createBuffer(2, context6.sampleRate*5, context6.sampleRate);
+
+
+var interpolacao;
+
+function interpolate(note, obj) {
+	var temp0 = new Float32Array;
+	var temp1 = new Float32Array;
+	interpolacao = obj.context.createBuffer(1, obj.context.sampleRate * 5, obj.context.sampleRate);
+    temp0 = obj.buffer.getChannelData(0);
+    temp1 = interpolacao.getChannelData(0);
+    var step = Math.pow(1.059463094, note); //raiz 12 de 2 - proporcao de 1 st
+	var position = 0;
+	
+    for (var i = 0; position < obj.buffer.length; i++) {
+		var x1 = Math.floor(position) - 1;
+		var x2 = x1;
+        temp1[i] = (x1 - position - 1) * temp0[x2] + (x2 - position - 1) * temp0[x1];
+        position += step ;
+    }
+}
+//------- --------//
+
+function Memes(context, electro) {
+	this.context = context;
+	this.buffer = this.context.createBuffer(2, this.context.sampleRate*5, this.context.sampleRate);
+	this.buffer = electro;	
+}
+
+Memes.prototype.play = function(scale) {
+	interpolate(scale, this);
+	var playSound = context.createBufferSource(); //cria um buffer para armazenar o som
+	playSound.buffer = interpolacao; //coloca o som interpolado no buffer
+	playSound.connect(context.destination); //conecta para a saida (falantes)
+	playSound.start(0); //Play!
+}
+
+
+var getSound = new XMLHttpRequest();  
+getSound.open("GET", "ogg/kasinao.ogg", true); 
+getSound.responseType = "arraybuffer"; 
+getSound.onload = function() { 
+context.decodeAudioData(getSound.response, function(buffer){
+	electro = buffer; 
+	});
+}
+getSound.send(); 
+
+
+
+var getSound2 = new XMLHttpRequest();  
+getSound2.open("GET", "ogg/erou.ogg", true); 
+getSound2.responseType = "arraybuffer"; 
+getSound2.onload = function() { 
+context2.decodeAudioData(getSound2.response, function(buffer){
+	electro2 = buffer; 
+	});
+}
+getSound2.send();
+
+var getSound3 = new XMLHttpRequest();  
+getSound3.open("GET", "ogg/Aham-Claudia-Senta-La.ogg", true); 
+getSound3.responseType = "arraybuffer"; 
+getSound3.onload = function() { 
+context3.decodeAudioData(getSound3.response, function(buffer){
+	electro3 = buffer; 
+	});
+}
+getSound3.send();
+
+var getSound4 = new XMLHttpRequest();  
+getSound4.open("GET", "ogg/risada_carlos_alberto.ogg", true); 
+getSound4.responseType = "arraybuffer"; 
+getSound4.onload = function() { 
+context4.decodeAudioData(getSound4.response, function(buffer){
+	electro4 = buffer; 
+	});
+}
+getSound4.send();
+
+var getSound5 = new XMLHttpRequest();  
+getSound5.open("GET", "ogg/eita-giovana.ogg", true); 
+getSound5.responseType = "arraybuffer"; 
+getSound5.onload = function() { 
+context5.decodeAudioData(getSound5.response, function(buffer){
+	electro5 = buffer; 
+	});
+}
+getSound5.send();
+
+var getSound6 = new XMLHttpRequest();  
+getSound6.open("GET", "ogg/eusourica.ogg", true); 
+getSound6.responseType = "arraybuffer"; 
+getSound6.onload = function() { 
+context6.decodeAudioData(getSound6.response, function(buffer){
+	electro6 = buffer; 
+	});
+}
+getSound6.send();
+	
+
+function Play2(nota) { //toca a nota
+	var memes = new Memes(context2, electro2);
+	memes.play(nota);
+}
+
+function Play3(nota){
+	var memes = new Memes(context,electro);
+	memes.play(nota);
+}
+
+function Play4(nota){
+	var memes = new Memes(context3,electro3);
+	memes.play(nota);
+}
+
+function Play5(nota){
+	var memes = new Memes(context4,electro4);
+	memes.play(nota);
+}
+
+function Play6(nota){
+	var memes = new Memes(context5,electro5);
+	memes.play(nota);
+}
+
+function Play7(nota){
+	var memes = new Memes(context6,electro6);
+	memes.play(nota);
+}
+
+
+
+
+window.addEventListener("keypress", SelectKey);
+
+function SelectKey (e) {
+	switch (String.fromCharCode(e.charCode)) {
+		case 'q': Play2(-5); break;
+		case 'w': Play2(0); break;
+		case 'e': Play2(5); break;
+		case 'a': Play3(-5); break;
+		case 's': Play3(0); break;
+		case 'd': Play3(5); break;
+		case 'z': Play4(-5); break;
+		case 'x': Play4(0); break;
+		case 'c': Play4(5); break;
+		case 'i': Play5(-5); break;
+		case 'o': Play5(0); break;
+		case 'p': Play5(5); break;
+		case 'j': Play6(-5); break;
+		case 'k': Play6(0); break;
+		case 'l': Play6(5); break;
+		case 'b': Play7(-5); break;
+		case 'n': Play7(0); break;
+		case 'm': Play7(5); break;
+		case 'Q': Play2(-5); break;
+		case 'W': Play2(0); break;
+		case 'E': Play2(5); break;
+		case 'A': Play3(-5); break;
+		case 'S': Play3(0); break;
+		case 'D': Play3(5); break;
+		case 'Z': Play4(-5); break;
+		case 'X': Play4(0); break;
+		case 'C': Play4(5); break;
+		case 'I': Play5(-5); break;
+		case 'O': Play5(0); break;
+		case 'P': Play5(5); break;
+		case 'J': Play6(-5); break;
+		case 'K': Play6(0); break;
+		case 'L': Play6(5); break;
+		case 'B': Play7(-5); break;
+		case 'N': Play7(0); break;
+		case 'M': Play7(5); break;
+
+	}
+}
+
+</script>
+</head>
+<center>
+<font face = "Arial" >
+<h1 style="color: black">INSTRUMEMES</h1>
+</font>
+</center>
+<body background="img/nazare.jpg"> </body>
+<body>
+	<audio controls >  
+					<source src="ogg/erou.ogg">
+	</audio>
+
+<center>
+<button id="switch" onclick="delay()">Delay!</button><br>
+<table border="1">
+<tr>
+<td>
+<input name="delay" type="range" min="0" max="1" step="0.1" value="0"></input><br>
+</td>
+</tr>
+</table><br>
+<button id="switch" onclick="filter()">Filtros</button><br>
+<table border="1">
+<tr>
+<td>Frequencia</td>
+<td>Valor</td>
+</tr>
+<tr>
+<td><input name="delay" type="range" min="0" max="1" step="0.1" value="0"></input></td>
+<td><input name="delay" type="range" min="0" max="1" step="0.1" value="0"></input></td>
+</tr>
+</table><br>
+<button id="switch" onclick="compress()">Compressor</button><br>
+<table border="1">
+<tr>
+<td>Attack</td>
+<td>Knee</td>
+<td>Threshhold</td>
+<td>Release</td>
+<td>Ratio</td>
+<td>Reduction</td>
+</tr>
+<tr>
+<td><input name="delay" type="range" min="0" max="1" step="0.1" value="0"></input></td>
+<td><input name="delay" type="range" min="0" max="1" step="0.1" value="0"></input></td>
+<td><input name="delay" type="range" min="0" max="1" step="0.1" value="0"></input></td>
+<td><input name="delay" type="range" min="0" max="1" step="0.1" value="0"></input></td>
+<td><input name="delay" type="range" min="0" max="1" step="0.1" value="0"></input></td>
+<td><input name="delay" type="range" min="0" max="1" step="0.1" value="0"></input></td>
+</tr>
+</table><br>
+
+
+<table > 
+<tr> 
+<td style = " width: 200px;  ">
+<img src="img/sombrio.jpg" onclick="Play2(0)" style="width:500px;height:300px";>
+<br>
+<br>
+<center>
+<button onclick="Play2(-3);">E</button>
+<button onclick="Play2(-1);">R</button>
+<button onclick="Play2(0);">R</button>
+<button onclick="Play2(2);">O</button>
+<button onclick="Play2(3);">U</button>
+</center>
+<br></td>
+<br>
+<td style = " width: 200px; ">
+<img src="img/gilb3.jpg" onclick="Play(0)" style="width:500px;height:250px";>
+<center>
+<br>
+<br>
+<button onclick="Play3(-5);">K</button>
+<button onclick="Play3(-3);">A</button>
+<button onclick="Play3(0);">S</button>
+<button onclick="Play3(1);">S</button>
+<button onclick="Play3(3);">I</button>
+<button onclick="Play3(6);">N</button>
+<button onclick="Play3(7);">A</button>
+<button onclick="Play3(8);">O</button>
+</center>
+<br>
+</td>
+</tr> 
+</table>
+	
+
+
+<center>
+<table > 
+<tr> 
+<br>
+<td style = " width: 200px;">
+<img src="img/xuxa.jpg" onclick="Play4(0)" style="width:500px;height:300px";/>
+<br>
+<br>
+<center>
+<button onclick="Play4(-1);">X</button>
+<button onclick="Play4(0);">U</button>
+<button onclick="Play4(1);">X</button>
+<button onclick="Play4(2);">A</button>
+<br>
+<br>
+</center>
+<br></td>
+<br>
+<td style = " width: 200px; ">
+<img src="img/carlos.jpg" onclick="Play5(0)" style="width:500px;height:300px";>
+<center>
+<br>
+<br>
+<button onclick="Play5(-5);">P</button>
+<button onclick="Play5(-1);">R</button>
+<button onclick="Play5(0);">A</button>
+<button onclick="Play5(1);">S</button>
+<button onclick="Play5(3);">S</button>
+<button onclick="Play5(6);">A</button>
+</center>
+<br>
+</td>
+</tr> 
+</table>
+
+<center>
+<table > 
+<tr> 
+<br>
+<td style = " width: 200px;">
+<img src="img/eitagiovana.png" onclick="Play6(0)" style="width:500px;height:300px";/>
+<br>
+<br>
+<center>
+<button onclick="Play6(-1);">E</button>
+<button onclick="Play6(0);">I</button>
+<button onclick="Play6(1);">T</button>
+<button onclick="Play6(2);">A</button>
+<br>
+<br>
+</center>
+<br></td>
+<br>
+<td style = " width: 200px; ">
+<img src="img/rica.jpg" onclick="Play7(0)" style="width:500px;height:300px";>
+<center>
+<br>
+<br>
+<button onclick="Play7(-5);">R</button>
+<button onclick="Play7(-1);">I</button>
+<button onclick="Play7(0);">C</button>
+<button onclick="Play7(3);">A</button>
+</center>
+<br>
+</td>
+</tr> 
+</table>
+
+
+<div class= "container"  style=" border: 2px solid white;width:25%;height:25%; ">
+   <style>
+     .container{
+      background-image: url("img/ata.jpg");
+      background-repeat: repeat-x;
+    }
+    </style>
+
+<font>
+<font color = "black" >
+<font face="Arial">
+<br> Memes BR <br>
+
+<br> q w e - ERROU <br>
+<br> a s d- AE KASSINAO <br>
+<br> z x c - AHAM CLAUDIA, SENTA LA </br> 
+<br> i o p - PRASSA EH NOSSA<br>
+<br> j k l - EITA GIOVANA<br>
+<br> b n m - EU SOU RICA<br>
+<br>
+
+</font>
+</div></center>
+</body>
+</html>
+

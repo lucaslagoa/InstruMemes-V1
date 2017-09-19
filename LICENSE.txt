@@ -1,0 +1,3 @@
+Todos os arquivos utilizados são de licensa livre ou utilizáveis para fins não comerciais.
+
+Este é um software livre sob licensa GNU/GLP.
